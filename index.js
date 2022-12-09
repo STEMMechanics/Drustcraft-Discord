@@ -1,7 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { REST, Routes, Client, Collection, Events, GatewayIntentBits, Partials } = require('discord.js');
-const { token, webhookAddress, webhookPort, webhookSecret } = require('./config.json');
+const { clientId, guildId, token, webhookAddress, webhookPort, webhookSecret } = require('./config.json');
 const http = require('http');
 const qs = require('querystring');
 const crypto = require('crypto');
