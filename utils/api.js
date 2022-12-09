@@ -1,20 +1,35 @@
 const { apiToken } = require('../config.json');
 const got = require('got');
 
-module.exports = async function (path) {
+module.exports = async function (path, method = 'GET', json = {}) {
     try {
-        const response = await got({
-            url: 'https://apis.drustcraft.com.au/',
+        var options = {
+            url: `https://api.drustcraft.com.au/${path}`,
+            throwHttpErrors: false,
+            method: method,
+            responseType: 'json',
             headers: {
                 'Authorization': `Bearer ${apiToken}`
             }
-        });
+        };
 
-        data = JSON.parse(response.body);
-        return data;
+        if (method && method != 'GET') {
+            options['json'] = json;
+        }
+
+        const response = await got(options);
+
+        return {
+            status: response.statusCode,
+            json: response.body
+        }
     } catch (error) {
-        // console.log('error2');
-        // console.log(error);
-        throw error;
+        console.error(`error calling api path ${path} using ${method}`);
+        console.error(error);
+
+        return {
+            status: 500,
+            json: {}
+        }
     }
 };
