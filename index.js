@@ -90,7 +90,7 @@ for (const file of webhookFiles) {
     const filePath = path.join(webhooksPath, file);
     const webhook = require(filePath);
 
-    webhooks[webhook.action] = webhook.execute;
+    webhooks[webhook.event] = webhook.execute;
 }
 
 client.on('ready', (client) => {
@@ -112,7 +112,8 @@ client.on('ready', (client) => {
                 });
 
                 request.on('end', function () {
-                    if (request.headers["x-drustcraft-signature"] == hmac.digest('hex')) {
+                    const hash = hmac.digest('hex');
+                    if (hash === request.headers["x-drustcraft-signature"]) {
                         var post = {};
                         
                         try {
@@ -134,7 +135,7 @@ client.on('ready', (client) => {
                         }
                         
                         if (webhooks[request.headers["x-drustcraft-event"]]) {
-                            const webhookResponse = webhooks[request.headers["x-drustcraft-event"]](client, post);
+                            const webhookResponse = webhooks[request.headers["x-drustcraft-event"]](client, request.headers, post);
 
                             if (webhookResponse && webhookResponse.json) {
                                 response.writeHead(webhookResponse.status ? webhookResponse.status : 200, { "Content-Type": "application/json" });
