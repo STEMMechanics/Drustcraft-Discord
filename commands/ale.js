@@ -10,8 +10,7 @@ module.exports = {
 			'Have an ale on the house :beer:',
 			'Ima give you one and one for ya friend :beers:',
 			'You be looking like you had enough',
-		]
-		
+		];
 
 		return interaction.reply(responses[Math.floor(Math.random() * responses.length)]);
 	},

@@ -20,7 +20,7 @@ module.exports = {
 			'What do you call a magic dog? A labracadabrador',
 			'My granddad has the heart of a lion and a lifetime ban from the Taronga Zoo',
 			'I went on a once in a lifetime holiday. Never again'
-		]
+		];
 		
 
 		return interaction.reply(responses[Math.floor(Math.random() * responses.length)]);

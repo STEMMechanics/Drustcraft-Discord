@@ -13,6 +13,8 @@ module.exports = {
 			'Want to help built a new chapter of the server? Join in a workshop and help out.',
 			'Take on an Elite in survival, they are generally not that good and will be killed if they run away from a PVP.',
 			'There are teleporters in every major city.',
+			'Press E to open your inventory',
+			'Jumping off high things without an elytra is generally not a good idea',
 		];
 
 		return interaction.reply(responses[Math.floor(Math.random() * responses.length)]);
