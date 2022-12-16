@@ -1,7 +1,7 @@
 const updateStatus = require('../utils/updateStatus.js');
 
 module.exports = {
-    action: 'player-leave',
+    event: 'player-leave',
     execute(client, data) {
         updateStatus(client);
     },

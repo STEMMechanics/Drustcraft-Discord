@@ -1,8 +1,11 @@
 const updateStatus = require('../utils/updateStatus.js');
 
 module.exports = {
-    action: 'player-join',
-    execute(client, data) {
-        updateStatus(client);
+    event: 'player.session',
+    execute(client, headers, data) {
+        console.log(headers);
+        console.log(data);
+
+        // updateStatus(client);
     },
 };

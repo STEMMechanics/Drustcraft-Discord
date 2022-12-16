@@ -1,7 +1,7 @@
 const { gameChatChannelId } = require('../config.json');
 
 module.exports = {
-    action: 'player-chat',
+    event: 'player.messages',
     execute(client, data) {
         if (gameChatChannelId) {
             try {
