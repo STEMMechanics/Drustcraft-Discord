@@ -16,9 +16,11 @@ module.exports = {
                 });
             }
 
-            var data = store.load();
-            objects.increment(data, message.author.id + '.messages');
-            store.save(data);
+            // var data = store.load();
+            // objects.increment(data, message.author.id + '.messages');
+            // store.save(data);
+
+            store.increment(message.author.id + '.messages')
         }
     },
 };
