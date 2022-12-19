@@ -21,7 +21,7 @@ module.exports = {
 				'%s starts a scuffle with %s and they run away',
 				'%s screams and %s wets their pants',
 				'%s screams and %s screams back',
-				'%s throws his drink at %s then starts licking the floor'
+				'%s throws their drink at %s then starts licking the floor'
 			];
 
 			return interaction.reply(util.format(responses[Math.floor(Math.random() * responses.length)], interaction.member.user.username, attacks.user.username));
