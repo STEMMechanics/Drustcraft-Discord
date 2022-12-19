@@ -15,5 +15,5 @@
 	"uploadHost": "https://api.drustcraft.com.au",
 	"uploadPort": "443",
 	"uploadPath": "/v1/server/upload",
-	"uploadKey": "1234567890abcdefghijklm",
+	"uploadToken": "1234567890abcdefghijklm"
 }

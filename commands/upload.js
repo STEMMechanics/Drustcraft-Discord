@@ -1,6 +1,7 @@
 const { uploadHost, uploadPort, uploadPath, uploadKey } = require('./config.json'); 
 var http = require('http');
 const { SlashCommandBuilder } = require('discord.js');
+const { isPlural } = require('pluralize');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -58,8 +59,11 @@ module.exports = {
             var httpOptions = {
                 host: uploadHost,
                 port: uploadPort,
+                headers: {
+                    'Authorization': 'Bearer ' + uploadToken
+                },
                 method: 'POST',
-                path: uploadPath + '?key=' + uploadKey + '&type=' + type + '&username=' + interaction.user.username + '&url=' + file.url,
+                path: uploadPath + '?type=' + type + '&username=' + interaction.user.username + '&url=' + file.url,
             };
 
             http.request(httpOptions, async (res) => {
