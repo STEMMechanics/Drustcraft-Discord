@@ -10,5 +10,10 @@
 	"webhookPort": 3987,
 	"webhookSecret": "your-payload-secret",
 
-	"gameChatChannelId": "123456789012345678"
+	"gameChatChannelId": "123456789012345678",
+
+	"uploadHost": "https://api.drustcraft.com.au",
+	"uploadPort": "443",
+	"uploadPath": "/v1/server/upload",
+	"uploadKey": "1234567890abcdefghijklm",
 }
