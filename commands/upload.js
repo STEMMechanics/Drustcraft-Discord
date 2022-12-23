@@ -1,7 +1,8 @@
-const { uploadHost, uploadPort, uploadPath, uploadKey } = require('./config.json'); 
+const { uploadHost, uploadPort, uploadPath, uploadToken } = require('../config.json'); 
 var http = require('http');
 const { SlashCommandBuilder } = require('discord.js');
 const { isPlural } = require('pluralize');
+const util = require('util');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -26,28 +27,29 @@ module.exports = {
         });
         const user = message.author
         const file = interaction.options.getAttachment('attach')
-        const type = interaction.options.getAttachment('type')
+        const type = interaction.options.getString('type')
 
         const typeData = {
             'schematic': {
                 name: 'Schematic',
-                extensions: ['.schematic', '.schem']
+                extensions: ['.schematic', '.schem'],
+                message: ':white_check_mark: The schematic will be uploaded to the Minecraft server in a few mins. To use the schematic, the command is `/schematic load %s`, then `//paste`',
             },
             'imagemap': {
                 name: 'ImageMap',
-                message: 'The image will be uploaded to the Minecraft server in a few mins.\nTo access it, use the command `/imagemap place %s` in creative mode',
+                message: ':white_check_mark: The image will be uploaded to the Minecraft server in a few mins. To place the image, use the command `/imagemap place %s` and follow the prompts',
                 extensions: ['.png']
             },
             'heightmap': {
                 name: 'HeightMap',
-                message: 'The schematic will be uploaded to the Minecraft server in a few mins.\nTo access it, use the command `/schematic load %s` in creative mode',
+                message: ':white_check_mark: The height map will be uploaded to the Minecraft server in a few mins. To use the height map brush, `/brush heightmap [-efr] %s [radius] [intensity]`',
                 extensions: ['.png']
             }
         }
 
         var valid = false;
         if (typeData.hasOwnProperty(type)) {
-            typeData[type].extensions.foreach((fileExt) => {
+            typeData[type].extensions.forEach((fileExt) => {
                 if(file.name.endsWith(fileExt)) {
                     valid = true;
                 }
@@ -55,18 +57,26 @@ module.exports = {
         }
 
         if(valid) {
-            await interaction.editReply('Uploading file...');
+            await interaction.editReply(':arrow_double_up: Sending the file now. Should only take a few seconds');
+            const postData = JSON.stringify({
+                'type': type,
+                'username': interaction.user.username,
+                'url': file.url
+            });
+
             var httpOptions = {
                 host: uploadHost,
                 port: uploadPort,
                 headers: {
-                    'Authorization': 'Bearer ' + uploadToken
+                    'Authorization': 'Bearer ' + uploadToken,
+                    'Content-Type': 'application/json',
+                    'Content-Length': Buffer.byteLength(postData),
                 },
                 method: 'POST',
-                path: uploadPath + '?type=' + type + '&username=' + interaction.user.username + '&url=' + file.url,
+                path: uploadPath
             };
 
-            http.request(httpOptions, async (res) => {
+            var req = http.request(httpOptions, async (res) => {
                 const { statusCode } = res;
                 const contentType = res.headers['content-type'];
 
@@ -80,7 +90,7 @@ module.exports = {
                 }
 
                 if (error) {
-                    await interaction.editReply('Oh, the server could not receive the file right now');
+                    await interaction.editReply(':stop_sign: Oh, the server could not receive the file right now');
                     console.error(error.message);
                     // Consume response data to free up memory
                     res.resume();
@@ -95,16 +105,19 @@ module.exports = {
                         const parsedData = JSON.parse(rawData);
                         await interaction.editReply(util.format(typeData[type].message, parsedData.filename));
                     } catch (e) {
-                        await interaction.editReply('Oh, the server could not receive the file right now');
+                        await interaction.editReply(':stop_sign: Oh, the server could not receive the file right now');
                         console.error(e.message);
                     }
                 });
             }).on('error', async (e) => {
-                await interaction.editReply('Oh, the server could not receive the file right now');
+                await interaction.editReply(':stop_sign: Oh, the server could not receive the file right now');
                 console.error(`Got error: ${e.message}`);
             });
+
+            req.write(postData);
+            req.end();
         } else {
-            await interaction.editReply('Hey, that type of file is not the right type');
+            await interaction.editReply(':stop_sign: Hey, that type of file is not the right type');
         }
     },
 };

@@ -1,4 +1,5 @@
 // const api = require('./api');
+const { uploadHost, uploadPort, uploadPath, uploadToken } = require('../config.json'); 
 const http = require('http');
 const { ActivityType } = require('discord.js');
 const pluralize = require('pluralize');
@@ -11,10 +12,10 @@ module.exports = function (client) {
             'Authorization': 'Bearer ' + uploadToken
         },
         method: 'GET',
-        path: 'server/query'
+        path: '/server/query'
     };
 
-    http.request(httpOptions, async (res) => {
+    var req = http.request(httpOptions, async (res) => {
         const { statusCode } = res;
         const contentType = res.headers['content-type'];
 
@@ -42,7 +43,7 @@ module.exports = function (client) {
                 const parsedData = JSON.parse(rawData);
 
                 client.user.setPresence({
-                    activities: [{ name: `${parsedData.players} ${pluralize('player', players)}`, type: ActivityType.Watching }],
+                    activities: [{ name: `${parsedData.players} ${pluralize('player', parseInt(parsedData.players))}`, type: ActivityType.Watching }],
                     status: 'online',
                 });
             } catch (e) {
@@ -52,6 +53,8 @@ module.exports = function (client) {
     }).on('error', async (e) => {
         console.error(`Got error: ${e.message}`);
     });
+
+    req.end();
 
     // api('online', 'GET').then((response) => {
     //     var players = 0;
